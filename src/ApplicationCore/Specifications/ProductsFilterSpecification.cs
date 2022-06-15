@@ -20,7 +20,12 @@ namespace ApplicationCore.Specifications
             {
                 Query.Where(x => x.CategoryId == categoryId);
             }
-           
+ 
+        }
+        public ProductsFilterSpecification(int? brandId, int? categoryId, int skip, int take) : this(brandId, categoryId)
+        {
+            
+            Query.Skip(skip).Take(take);
         }
     }
 }
