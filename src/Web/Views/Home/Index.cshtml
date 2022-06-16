@@ -24,7 +24,13 @@
                 <div class="card-body">
                     <img src="~/img/products/@product.PictureUri" alt="@product.Name" class="w-100" />
                     <div class="product-name mt-2" title="@product.Name">@product.Name</div>
-                    <div class="mt-2">@product.PriceTry</div>
+                    <div class="mt-3 d-flex justify-content-between">
+                        <div>@product.PriceTry</div>
+                        <a data-add-item-to-basket="@product.Id" href="#" class="btn btn-sm btn-success" data-toggle="tooltip" data-placement="top" title="Add to Basket">
+                            <i class="fa-solid fa-lg fa-cart-plus"></i>
+                        </a>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -85,11 +91,28 @@
 
 <hr />
 
+@section Scripts {
+    <script>
+        $("[data-add-item-to-basket]").click(function (event) {
+            event.preventDefault();
+            const id = $(this).data("add-item-to-basket");
+            $.ajax({
+                url: "@Url.Action("AddItem", "Basket")",
+                type: "POST",
+                data: { productId: id },
+                success: function (data) {
+                    alert("eklendi, toplam öğe adedi: " + data.totalItems);
+                }
+            });
+        });
+    </script>
+}
+
 @*<p>CurrentPage: @Model.PaginationInfo.CurrentPage</p>
-<p>TotalItems: @Model.PaginationInfo.TotalItems</p>
-<p>ItemsOnPage: @Model.PaginationInfo.ItemsOnPage</p>
-<p>TotalPages: @Model.PaginationInfo.TotalPages</p>
-<p>DisplayStart: @Model.PaginationInfo.DisplayStart</p>
-<p>DisplayEnd: @Model.PaginationInfo.DisplayEnd</p>
-<p>HasPrevious: @Model.PaginationInfo.HasPrevious</p>
-<p>HasNext: @Model.PaginationInfo.HasNext</p>*@
+    <p>TotalItems: @Model.PaginationInfo.TotalItems</p>
+    <p>ItemsOnPage: @Model.PaginationInfo.ItemsOnPage</p>
+    <p>TotalPages: @Model.PaginationInfo.TotalPages</p>
+    <p>DisplayStart: @Model.PaginationInfo.DisplayStart</p>
+    <p>DisplayEnd: @Model.PaginationInfo.DisplayEnd</p>
+    <p>HasPrevious: @Model.PaginationInfo.HasPrevious</p>
+    <p>HasNext: @Model.PaginationInfo.HasNext</p>*@
