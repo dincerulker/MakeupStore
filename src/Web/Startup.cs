@@ -1,4 +1,4 @@
-using ApplicationCore.Interfaces;
+﻿using ApplicationCore.Interfaces;
 using ApplicationCore.Services;
 using Infrastructure.Data;
 using Infrastructure.Identity;
@@ -72,7 +72,7 @@ namespace Web
             app.UseHttpsRedirection();
 
             var ci = new CultureInfo("en-US");
-            ci.NumberFormat.CurrencySymbol = "�";
+            ci.NumberFormat.CurrencySymbol = "₺";
 
             var suppertedCultures = new[] { ci };
             app.UseRequestLocalization(options =>

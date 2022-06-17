@@ -41,3 +41,5 @@ Update-Database -Context AppIdentityDbContext
 https://www.connectionstrings.com/npgsql/
 
 https://docs.microsoft.com/en-us/aspnet/core/fundamentals/localization?view=aspnetcore-5.0#use-a-custom-provider
+
+https://codepen.io/yigith/pen/XWZGwyJ

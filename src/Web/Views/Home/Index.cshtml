@@ -101,7 +101,8 @@
                 type: "POST",
                 data: { productId: id },
                 success: function (data) {
-                    alert("eklendi, toplam öğe adedi: " + data.totalItems);
+                    $("#navBasketItemCount").text(data.totalItems);
+                    successMessage("Item successfully added to cart")
                 }
             });
         });
