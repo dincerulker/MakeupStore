@@ -43,3 +43,5 @@ https://www.connectionstrings.com/npgsql/
 https://docs.microsoft.com/en-us/aspnet/core/fundamentals/localization?view=aspnetcore-5.0#use-a-custom-provider
 
 https://codepen.io/yigith/pen/XWZGwyJ
+
+https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/write?view=aspnetcore-5.0
