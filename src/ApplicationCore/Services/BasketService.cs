@@ -44,11 +44,11 @@ namespace ApplicationCore.Services
         {
             var specBasket = new BasketSpecification(buyerId);
             var basket = await _basketRepo.FirstOrDefaultAsync(specBasket);
-            if(basket != null)
+            if (basket != null)
             {
                 await _basketRepo.DeleteAsync(basket);
             }
-            
+
         }
 
         public async Task DeleteBasketItemAsync(string buyerId, int basketItemId)
@@ -67,9 +67,29 @@ namespace ApplicationCore.Services
 
         public async Task<int> GetBasketItemCountAsync(string buyerId)
         {
-            if(buyerId == null) return 0;
+            if (buyerId == null) return 0;
             var basket = await GetBasketAsync(buyerId);
             return basket == null ? 0 : basket.Items.Sum(x => x.Quantity);
+        }
+
+        public async Task<Basket> SetQuantities(string buyerId, Dictionary<int, int> quantities)
+        {
+            var basket = await GetBasketAsync(buyerId);
+            if(basket == null) return null;
+
+            foreach (var item in basket.Items)
+            {
+                try
+                {
+                    item.Quantity = quantities[item.Id];
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            await _basketRepo.UpdateAsync(basket);
+            return basket;
         }
 
         public async Task TransferBasketAsync(string sourceBuyerId, string targetBuyerId)

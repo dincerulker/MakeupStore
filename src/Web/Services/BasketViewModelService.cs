@@ -4,9 +4,11 @@ using Infrastructure.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Web.Extensions;
 using Web.Interfaces;
 using Web.Models;
 
@@ -63,24 +65,8 @@ namespace Web.Services
         public async Task<BasketViewModel> GetBasketViewModelAsync()
         {
             var basket = await _basketService.GetBasketAsync(BuyerId);
-
-            if(basket == null) return null;
-
-            return new BasketViewModel()
-            {
-                Id = basket.Id,
-                BuyerId = basket.BuyerId,
-                Items = basket.Items.Select(x => new BasketItemViewModel()
-                {
-                    Id=x.Id,
-                    ProductId = x.ProductId,
-                    ProductName = x.Product.Name,
-                    UnitPrice = x.Product.Price,
-                    Quantity = x.Quantity,
-                    PictureUri = x.Product.PictureUri
-                }
-                ).ToList()
-            };
+            //if (basket == null) return null;
+            return basket?.ToBasketViewModel();
         }
 
         public async Task DeleteBasketAsync()
@@ -92,5 +78,12 @@ namespace Web.Services
         {
             await _basketService.DeleteBasketItemAsync(BuyerId, basketItemId);
         }
+
+        public async Task<BasketViewModel> SetQuantities(Dictionary<int, int> quantities)
+        {
+            var basket = await _basketService.SetQuantities(BuyerId, quantities);
+            return basket?.ToBasketViewModel();
+        }
+
     }
 }
