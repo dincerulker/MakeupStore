@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ApplicationCore.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Web.Interfaces;
+using Web.Models;
 
 namespace Web.Controllers
 {
@@ -20,10 +23,11 @@ namespace Web.Controllers
         }
 
 
+
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(Dictionary<int, int> quantities)
         {
-            var basket = await _basketViewModelService.SetQuantities(quantities);
+            var basket = await _basketViewModelService.SetQuantitiesAsync(quantities);
             TempData["message"] = "Items updated successfully.";
             return View(basket);
         }
@@ -51,6 +55,40 @@ namespace Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize]
+        public async Task<IActionResult> Checkout()
+        {
+            var vm = new CheckoutViewModel();
+            vm.Basket = await _basketViewModelService.GetBasketViewModelAsync();
+            return View(vm);
+        }
+
+        [Authorize]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Checkout(CheckoutViewModel vm)
+        {
+            if (ModelState.IsValid)
+            {
+                var address = new Address()
+                {
+                    City = vm.City,
+                    Country = vm.Country,
+                    State = vm.State,
+                    Street = vm.Street,
+                    ZipCode = vm.ZipCode
+                };
+                var order = await _basketViewModelService.CompleteCheckoutAsync(address);
+                return RedirectToAction(nameof(OrderComplete), new { orderId = order.Id });
+            }
+            vm.Basket = await _basketViewModelService.GetBasketViewModelAsync();
+            return View(vm);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> OrderComplete(int orderId)
+        {
+            return View(orderId);
+        }
 
     }
 }

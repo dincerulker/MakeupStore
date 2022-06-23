@@ -18,6 +18,7 @@ namespace Web.Services
     {
         private readonly IBasketService _basketService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IOrderService _orderService;
 
         public HttpContext HttpContext => _httpContextAccessor.HttpContext;
 
@@ -26,10 +27,11 @@ namespace Web.Services
 
         public string BuyerId => UserId ?? AnonymousId;
 
-        public BasketViewModelService(IBasketService basketService, IHttpContextAccessor httpContextAccessor)
+        public BasketViewModelService(IBasketService basketService, IHttpContextAccessor httpContextAccessor, IOrderService orderService)
         {
             _basketService = basketService;
             _httpContextAccessor = httpContextAccessor;
+            _orderService = orderService;
         }
 
         public async Task<int> AddItemToBasketAsync(int productId, int quantity)
@@ -79,11 +81,23 @@ namespace Web.Services
             await _basketService.DeleteBasketItemAsync(BuyerId, basketItemId);
         }
 
-        public async Task<BasketViewModel> SetQuantities(Dictionary<int, int> quantities)
+        public async Task<BasketViewModel> SetQuantitiesAsync(Dictionary<int, int> quantities)
         {
             var basket = await _basketService.SetQuantities(BuyerId, quantities);
             return basket?.ToBasketViewModel();
         }
 
+        public async Task<OrderViewModel> CompleteCheckoutAsync(Address address)
+        {
+            var order = await _orderService.CreateOrderAsync(BuyerId, address);
+            await DeleteBasketAsync();
+
+            return new OrderViewModel()
+            {
+                Id = order.Id,
+                OrderDate = order.OrderDate,
+                TotalPrice = order.Items.Sum(x => x.Quantity * x.UnitPrice)
+            };
+        }
     }
 }
